@@ -9,13 +9,13 @@ interface HeaderProps {
 export default function Header({ onSignOut }: HeaderProps) {
   return (
     <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between shadow-soft">
-      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-        <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-lg overflow-hidden flex-shrink-0">
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-xl overflow-hidden flex-shrink-0">
           <Image
             src="/logo-bg.png"
             alt="Goal Tracker Logo"
-            width={48}
-            height={48}
+            width={80}
+            height={80}
             className="object-contain w-full h-full"
             priority
             unoptimized

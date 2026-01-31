@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Goal } from '@/lib/types'
 import { format, differenceInDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isBefore, isAfter, startOfDay } from 'date-fns'
+import { getQuarterInfo } from '@/lib/quarterUtils'
 
 export default function Calendar() {
   const router = useRouter()
@@ -148,9 +149,14 @@ export default function Calendar() {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-1">
                 {format(currentDate, 'MMMM')}
               </h2>
-              <p className="text-sm sm:text-base text-gray-500 font-semibold">
-                {format(currentDate, 'yyyy')}
-              </p>
+              <div className="flex items-center justify-center gap-2">
+                <p className="text-sm sm:text-base text-gray-500 font-semibold">
+                  {format(currentDate, 'yyyy')}
+                </p>
+                <span className="px-2 py-0.5 rounded-md bg-pink-100 text-pink-700 text-xs sm:text-sm font-extrabold">
+                  Q{getQuarterInfo(currentDate).quarter}
+                </span>
+              </div>
             </div>
             <button 
               onClick={handleNextMonth} 
