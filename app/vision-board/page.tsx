@@ -133,7 +133,7 @@ export default function VisionBoard() {
         }
         
         let errorMessage = 'Error saving image. '
-        const errorMsg = dbError.message || dbError.error || String(dbError)
+        const errorMsg = dbError.message || String(dbError)
         
         if (errorMsg.includes('row-level security') || errorMsg.includes('RLS') || errorMsg.includes('policy')) {
           errorMessage += 'Database policies not configured. Please run the schema.sql file in Supabase SQL Editor.'
