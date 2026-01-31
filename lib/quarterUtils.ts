@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { Goal } from './types'
 
 export interface QuarterInfo {
   quarter: number
