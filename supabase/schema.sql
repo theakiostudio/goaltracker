@@ -50,30 +50,38 @@ ALTER TABLE public.goals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.milestones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.vision_board_images ENABLE ROW LEVEL SECURITY;
 
--- Profiles policies
+-- Profiles policies (idempotent - can be run multiple times)
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile" ON public.profiles
   FOR UPDATE USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
 CREATE POLICY "Users can insert own profile" ON public.profiles
   FOR INSERT WITH CHECK (auth.uid() = id);
 
--- Goals policies
+-- Goals policies (idempotent - can be run multiple times)
+DROP POLICY IF EXISTS "Users can view own goals" ON public.goals;
 CREATE POLICY "Users can view own goals" ON public.goals
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own goals" ON public.goals;
 CREATE POLICY "Users can insert own goals" ON public.goals
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own goals" ON public.goals;
 CREATE POLICY "Users can update own goals" ON public.goals
   FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own goals" ON public.goals;
 CREATE POLICY "Users can delete own goals" ON public.goals
   FOR DELETE USING (auth.uid() = user_id);
 
--- Milestones policies
+-- Milestones policies (idempotent - can be run multiple times)
+DROP POLICY IF EXISTS "Users can view own milestones" ON public.milestones;
 CREATE POLICY "Users can view own milestones" ON public.milestones
   FOR SELECT USING (
     EXISTS (
@@ -83,6 +91,7 @@ CREATE POLICY "Users can view own milestones" ON public.milestones
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert own milestones" ON public.milestones;
 CREATE POLICY "Users can insert own milestones" ON public.milestones
   FOR INSERT WITH CHECK (
     EXISTS (
@@ -92,6 +101,7 @@ CREATE POLICY "Users can insert own milestones" ON public.milestones
     )
   );
 
+DROP POLICY IF EXISTS "Users can update own milestones" ON public.milestones;
 CREATE POLICY "Users can update own milestones" ON public.milestones
   FOR UPDATE USING (
     EXISTS (
@@ -101,6 +111,7 @@ CREATE POLICY "Users can update own milestones" ON public.milestones
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete own milestones" ON public.milestones;
 CREATE POLICY "Users can delete own milestones" ON public.milestones
   FOR DELETE USING (
     EXISTS (
@@ -110,13 +121,16 @@ CREATE POLICY "Users can delete own milestones" ON public.milestones
     )
   );
 
--- Vision board images policies
+-- Vision board images policies (idempotent - can be run multiple times)
+DROP POLICY IF EXISTS "Users can view own vision board images" ON public.vision_board_images;
 CREATE POLICY "Users can view own vision board images" ON public.vision_board_images
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own vision board images" ON public.vision_board_images;
 CREATE POLICY "Users can insert own vision board images" ON public.vision_board_images
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own vision board images" ON public.vision_board_images;
 CREATE POLICY "Users can delete own vision board images" ON public.vision_board_images
   FOR DELETE USING (auth.uid() = user_id);
 
@@ -135,7 +149,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Trigger to create profile on user signup
+-- Trigger to create profile on user signup (idempotent - can be run multiple times)
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
