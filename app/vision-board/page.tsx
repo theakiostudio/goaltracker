@@ -83,7 +83,7 @@ export default function VisionBoard() {
         
         // Provide more specific error messages
         let errorMessage = 'Error uploading image. '
-        const errorMsg = uploadError.message || uploadError.error || String(uploadError)
+        const errorMsg = uploadError.message || String(uploadError)
         
         if (errorMsg.includes('Bucket not found') || errorMsg.includes('bucket')) {
           errorMessage += 'Storage bucket "vision-board" not found. Please create it in Supabase Storage settings and make it public.'
