@@ -443,8 +443,12 @@ export default function GoalDetails() {
                     onChange={(e) => setNewMilestoneTitle(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
-                        addMilestone()
+                        e.preventDefault()
+                        if (newMilestoneTitle.trim() && !addingMilestone) {
+                          addMilestone()
+                        }
                       } else if (e.key === 'Escape') {
+                        e.preventDefault()
                         handleCancelAddMilestone()
                       }
                     }}
