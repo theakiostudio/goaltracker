@@ -8,7 +8,7 @@ import GoalCard from '@/components/GoalCard'
 import Header from '@/components/Header'
 import ActionButtons from '@/components/ActionButtons'
 import GoalStats from '@/components/GoalStats'
-import { groupGoalsByQuarter, getAllQuarters, isCurrentQuarter, isPastQuarter } from '@/lib/quarterUtils'
+import { groupGoalsByQuarter, getAllQuarters, isCurrentQuarter, isPastQuarter, parseQuarterKey, QuarterInfo } from '@/lib/quarterUtils'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 export default function Home() {
@@ -85,12 +85,37 @@ export default function Home() {
   const goalsByQuarter = groupGoalsByQuarter(goals)
   const allQuarters = getAllQuarters()
   
-  // Filter quarters that have goals or are current/future
-  const relevantQuarters = allQuarters.filter(q => {
+  // Get all quarters that have goals (including past quarters)
+  const quartersWithGoals: QuarterInfo[] = []
+  goalsByQuarter.forEach((_, key) => {
+    try {
+      quartersWithGoals.push(parseQuarterKey(key))
+    } catch (e) {
+      console.error('Error parsing quarter key:', key, e)
+    }
+  })
+  
+  // Merge quarters with goals and current/future quarters, removing duplicates
+  const quarterMap = new Map<string, QuarterInfo>()
+  
+  // Add all quarters that have goals
+  quartersWithGoals.forEach(q => {
     const key = `${q.year}-Q${q.quarter}`
-    const hasGoals = goalsByQuarter.has(key)
-    const isCurrentOrFuture = !isPastQuarter(q) || isCurrentQuarter(q)
-    return hasGoals || isCurrentOrFuture
+    quarterMap.set(key, q)
+  })
+  
+  // Add current and future quarters (even if they don't have goals)
+  allQuarters.forEach(q => {
+    const key = `${q.year}-Q${q.quarter}`
+    if (!isPastQuarter(q) || isCurrentQuarter(q)) {
+      quarterMap.set(key, q)
+    }
+  })
+  
+  // Convert to array and sort chronologically (oldest first)
+  const relevantQuarters = Array.from(quarterMap.values()).sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year
+    return a.quarter - b.quarter
   })
 
   return (
@@ -134,6 +159,7 @@ export default function Home() {
               const isCurrent = isCurrentQuarter(quarterInfo)
               const isPast = isPastQuarter(quarterInfo)
               
+              // Show quarters that have goals, or current quarter (even if empty)
               if (quarterGoals.length === 0 && !isCurrent) return null
               
               return (

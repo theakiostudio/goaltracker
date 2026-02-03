@@ -116,3 +116,17 @@ export function isPastQuarter(quarterInfo: QuarterInfo): boolean {
   if (quarterInfo.year === currentQuarter.year && quarterInfo.quarter < currentQuarter.quarter) return true
   return false
 }
+
+/**
+ * Parse a quarter key (e.g., "2024-Q4") into QuarterInfo
+ */
+export function parseQuarterKey(key: string): QuarterInfo {
+  const match = key.match(/(\d+)-Q(\d+)/)
+  if (!match) {
+    throw new Error(`Invalid quarter key: ${key}`)
+  }
+  const year = parseInt(match[1], 10)
+  const quarter = parseInt(match[2], 10)
+  const date = new Date(year, (quarter - 1) * 3, 1)
+  return getQuarterInfo(date)
+}
